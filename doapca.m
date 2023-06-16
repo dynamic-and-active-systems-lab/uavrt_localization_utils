@@ -1,5 +1,4 @@
 function [DOA, tau] = doapca(pulseList,strengthtype,scale)
-
 %DOAPCA developes a bearing estimate for a series of received radio pulses
 %based on the principle component analysis method.
 %   This function conducts a principle component analysis type bearing
@@ -42,6 +41,11 @@ function [DOA, tau] = doapca(pulseList,strengthtype,scale)
 %   kappa               a (1x1) double containing the kappa value fitted 
 %                       vonMises distribution
 %
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 numPulses = numel(pulseList(:));
 

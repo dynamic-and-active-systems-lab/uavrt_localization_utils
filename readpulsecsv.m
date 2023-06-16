@@ -1,6 +1,22 @@
 function [pulses, commands] = readpulsecsv(filepath)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%READPULSECSV Reads in a pulse csv file and outputs a vector of pulses in
+%the file and any commands in the file. 
+%   This function reads a pulse csv file and converts the pulses and
+%   commands in the csv to PulseStruct and CommandStructs. It returns a
+%   vector of these structures. 
+%
+%INPUTS:
+%   filePath - char array of the path to the file
+%
+%OUPUTS:
+%   pusles   - n x 1 vector of PulseStructs from the file
+%   commands - n x 1 vector of CommandStructs from the file
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 %Initialize outputs so they are defined for all exectution paths. 
 pulses = PulseStruct();

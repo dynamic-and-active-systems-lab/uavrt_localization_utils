@@ -1,6 +1,31 @@
 function [xEast_m , yNorth_m, range_m, bearing_deg] = latlon2eastnorth(lat1, lon1, lat2, lon2)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%LATLON2EASTNORTH Convert listings of latitudes and longitudes to a
+%cartesian grid of east-north in meters.
+%   This functions will provide a the position in meters of the lat/lon
+%   positions provided as the second set of inputs relative the single
+%   lat/lon primary position entry based on the Vicenty distance equation. 
+%
+%INPUTS:
+%   lat1 - 1 x 1 latitude of origin 
+%   lon1 - 1 x 1 longitude of origin 
+%   lat2 - n x 1 latitude vector of positions to measure to
+%   lon2 - n x 1 longitude vector of positions to measure to
+%
+%OUTPUTS:
+%   xEast_m     - n x 1 Position in meters East of the lat/lon2 entries
+%                 from the origin position
+%   yNorth_m    - n x 1 Position in meters North of the lat/lon2 entries
+%                 from the origin position
+%   range_m     - n x 1 range in meters of the lat/lon2 entries
+%                 from the origin position
+%   bearing_deg - n x 1 bearing angle degrees off true North of the 
+%                 lat/lon2 entries from the origin position
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 if numel(lat1)~=1 | numel(lon1)~=1 
     fprintf('UAV-RT: Only one lat and lon allowed for pimary position.')
@@ -24,7 +49,7 @@ for i = 1:nSecondary
     currLon2 = lon2(i);
 
     %X east
-    theSignEast = sign(angdiff(lon1, currLon2));
+    theSignEast  = sign(angdiff(lon1, currLon2));
     theSignNorth = sign(angdiff(lat1, currLat2));
     xEast_m(i)   = theSignEast  * vincentydistance(lat1, lon1, lat1, currLon2);
     yNorth_m(i)  = theSignNorth * vincentydistance(lat1, lon1, currLat2, lon1);

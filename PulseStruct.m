@@ -1,7 +1,34 @@
-
 function pulse = PulseStruct(pos, euler, time, strength, freqMHz, tagID)
-%UNTITLED Construct an instance of this class
-%   Detailed explanation goes here
+%PULSESTRUCT Generates a Pulse structure
+%   This function generates a standard pulse structure with the
+%   following fields:
+%
+%   position   Position as a PositionStruct
+%   euler      Euler angles as a EulerAngleStruct
+%   time       Time of received pulse in seconds
+%   strength   Strength metric of received pulse
+%   freqMHz    Frequency of received pulse in MHz
+%   tagID      Tag ID number of received pulse
+
+%   If input vectors are provided, they must be the same size size. In that
+%   case, the output is a vector of structures.
+%
+%INPUTS:
+%   position  -   n x 1 vector of positions (as PulseStructs)
+%   euler     -   n x 1 vector of eulerangles (as EulerAngleStructs)
+%   strength  -   n x 1 vector of pulse strength metrics (doubles)
+%   freqMHz   -   n x 1 vector of pulse frequencies in MHz (doubles)
+%   tagID     -   n x 1 vector of pulse tag IDs (doubles)
+%
+%OUTPUTS:
+%   pulse   -   n x 1 vector of pulse structures
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 localPosition = PositionStruct();
 localEuler    = EulerAngleStruct();
 localTime     = 0;

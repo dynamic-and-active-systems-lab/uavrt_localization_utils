@@ -1,18 +1,31 @@
 function [tableOut] = readbearingcsv(filePath)
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
-
-%Define parts of CSV file
-%Filename of parent pulse file 
-%Bearing angle in degrees
-%Tau value
-%lat in deg
-%lon in deg
-%alt AGL in m
-%alt ASL in m
-%start time of bearing measurements in s
-%end time of bearing measurements in s
-
+%READBEARINGCSV Reads in a bearing csv file and outputs the file as a
+%MATLAB table.
+%   This function reads a bearing csv file and converts the file to a
+%   MATLAB table wit the following headings:
+%
+%   1 - TagID
+%   2 - Filename of parent pulse file 
+%   3 - Bearing angle in degrees
+%   4 - Tau value
+%   5 - lat in deg
+%   6 - lon in deg
+%   7 - alt AGL in m
+%   8 - alt ASL in m
+%   9 - start time of bearing measurements in s
+%   10 - end time of bearing measurements in s
+%
+%INPUTS:
+%   filePath - char array of the path to the file
+%
+%OUPUTS:
+%   tableOut - Matlab table with the columns specified above. 
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 fid = fopen(filePath,'r');
 

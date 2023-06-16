@@ -1,6 +1,29 @@
 function eul = EulerAngleStruct(roll, pitch, yaw)
-%UNTITLED2 Construct an instance of this class
-%   Detailed explanation goes here
+%EULERANGLESTRUCT Generates a Euler Angle structure
+%   This function generates a standard Euler angle structure with the
+%   following fields:
+%
+%   roll_deg    Roll angle in degrees
+%   pitch_deg   Pitch angle in degrees
+%   yaw_deg     Yaw angle in degrees
+
+%   If input vectors are provided, they must be the same size size. In that
+%   case, the output is a vector of structures.
+%
+%INPUTS:
+%   roll  -   n x 1 vector of roll angles (doubles)
+%   pitch -   n x 1 vector of pitch angles (doubles)
+%   yaw   -   n x 1 vector of yaw angles (doubles)
+%
+%OUTPUTS:
+%   eul    -   n x 1 vector of Euler angle structures
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 localRoll   = 0;
 localPitch  = 0;
 localYaw    = 0;
@@ -35,9 +58,6 @@ if nargin>0
             eul(i,j).yaw_deg   = yaw(i,j);
         end
     end
-    % eul.roll_deg  = roll;
-    % eul.pitch_deg = pitch;
-    % eul.yaw_deg   = yaw;
 end
 
 end

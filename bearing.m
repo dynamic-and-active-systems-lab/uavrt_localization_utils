@@ -1,13 +1,33 @@
 function [bearing] = bearing(filePath)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%BEARING generates bearing estimates from pulse files
+%   This function generates bearing estimates from pulses within a pulse
+%   file provided by the file path. If a bearing.csv file doesn't exists in
+%   the same directory as the provided file path, it will generate the
+%   bearing file. If a bearing file already exists, this function will read
+%   the file and determine if a bearing estimate has already been made for
+%   the provided filePath. If so, the function will replace that bearing in
+%   the file. If not, the new bearing will be appended to the file. 
+%
+%INPUTS
+%   filePath - a char array of the path the pulse file
+%OUTPUTS
+%   bearing - double of the bearing estimate in degrees from North
+%
+%   Note that this program also generates/modifies bearings.csv
+%
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 coder.cinclude('stdio.h');%Needed for remove and move file commands
 
-%pulseStructVec = getpulsesfromlog(filePath);
 [pulseStructVec, ~] = readpulsecsv(filePath);
 
 tagIDs   = [pulseStructVec(:).tagID];
+
 tagID = uint32(0);%Define so coder knows types. 
 tagID = uint32(mode(tagIDs, 'all')); %In case some other tags' pulses got into the dataset somehow. 
 otherTagPulseInds = (tagIDs ~= tagID);
@@ -26,7 +46,6 @@ pulseStructVec = pulseStructVec(~otherTagPulseInds);
 posVec  = [pulseStructVec(:).position];
 timeVec = [pulseStructVec(:).time];
 
-
 latitude_deg  = median([posVec(:).latitude_deg],'all');
 longitude_deg = median([posVec(:).longitude_deg],'all');
 alt_AGL_m     = median([posVec(:).relative_altitude_m],'all');
@@ -34,14 +53,14 @@ alt_ASL_m     = median([posVec(:).absolute_altitude_m],'all');
 time_start_s  = min(timeVec,[],'all');
 time_end_s    = max(timeVec,[],'all');
 
-
 sepInds = strfind(filePath, filesep);
 
 fileName = filePath(sepInds(end)+1:end);
+
 fileDirectory = filePath(1:sepInds(end)-1);
 
-
 bearingFilePath = [fileDirectory, filesep, 'bearings.csv'];
+
 tempBearingFilePath = [fileDirectory, filesep, 'bearings_temp.csv'];
 
 bearingFileAlreadyExists = isfile(bearingFilePath);
@@ -58,6 +77,7 @@ startTime_fspec = '%f';
 endTime_fspec = '%f';
 
 d = ',';
+
 total_fspec = [tag_id_fspec, d, ...
                parentFileName_fspec, d, ...
                bearing_fspec, d, ...
@@ -70,7 +90,6 @@ total_fspec = [tag_id_fspec, d, ...
                endTime_fspec,'\n'];
 
 currParentFileName = fileName;
-
 
 if bearingFileAlreadyExists
     %Read bearing file and see if a bearing for this parent file has already been written
@@ -170,6 +189,5 @@ else
     fclose(fid);
 
 end
-
 
 end

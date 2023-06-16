@@ -1,6 +1,27 @@
 function command = CommandStruct(commandID, pos)
-%UNTITLED Construct an instance of this class
-%   Detailed explanation goes here
+%COMMANDSTRUCT Generates a command structure
+%   This function generates a standard command structure with the
+%   following fields:
+%
+%   commandID    CommandID
+%   position     Position (PositionStruct)
+
+%   If input vectors are provided, they must be the same size size. In that
+%   case, the output is a vector of position structures.
+%
+%INPUTS:
+%   commandID  -   n x 1 vector of command IDs (double)
+%   pos        -   n x 1 vector of positions (PositionStruct)
+%
+%OUTPUTS:
+%   command    -   n x 1 vector of command structures
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 localPosition = PositionStruct();
 %localTime     = 0;
 localCommandID = 0;

@@ -2,6 +2,23 @@ function [s] = vincentydistance(lat1, lon1, lat2, lon2)
 %VICENTYDISTANCE calculates the distance in meters between two points using
 %the Vicenty formulea method.
 %   Inputs are in degrees
+%
+%INPUTS:
+%   lat1 - 1 x 1 latitude of position 1 in degrees
+%   lon1 - 1 x 1 longitude of position 1 in degrees
+%   lat2 - 1 x 1 latitude of position 2 in degrees
+%   lon2 - 1 x 1 longitude of position 2 in degrees
+%
+%OUPUTS:
+%   s - 1 x 1 distance in meters between the two positions
+%
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 
 %Using WGS-84
 % lat1 = 35 + 10/60 + 24.75/3600;

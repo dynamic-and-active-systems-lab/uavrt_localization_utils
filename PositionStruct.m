@@ -1,6 +1,33 @@
 function [pos] = PositionStruct(lat, lon, altAbs, altRel)
-%UNTITLED2 Construct an instance of this class
-%   Detailed explanation goes here
+%POSITIONSTRUCT Generates a position structure
+%   This function generates a standard position structure with the
+%   following fields:
+%
+%   latitude_deg        Latitude in degrees
+%   latitude_deg        Longitude in degrees
+%   absolute_altitude_m Altitude in meters above ground level
+%   relative_altitude_m Altitude in meters above sea level
+%   
+%   If input vectors are provided, they must be the same size size. In that
+%   case, the output is a vector of position structures.
+%
+%INPUTS:
+%   lat    -   n x 1 vector of doubles of latitudes
+%   lon    -   n x 1 vector of doubles of longitudes
+%   altAbs -   n x 1 vector of doubles of altitudes above sea level in
+%              meters
+%   altRel -   n x 1 vector of doubles of altitudes above ground level in
+%              meters
+%
+%OUTPUTS:
+%   pos    -   n x 1 vector of position structures
+%
+%--------------------------------------------------------------------------
+% Author: Michael Shafer
+% Date: 2023-06-12
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 
 localLat    = 0;
 localLon    = 0;
