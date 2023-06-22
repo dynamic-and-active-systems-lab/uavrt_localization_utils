@@ -102,14 +102,16 @@ for i = 1:nTags
 
         tagPosition_m = localizefrombearings(xEast_m,yNorth_m,measuredBearings,method);
         %plot(tagPosition_m(1),tagPosition_m(2),'k.','Markersize',20); hold on
+        
+        tagRange_m = norm(tagPosition_m);
+        
+        tagBearing_deg = 180/pi*atan2(tagPosition_m(1), tagPosition_m(2));
 
-        %TODO convert position in meters to lat-lons
-        %using m position until I get the equations. 
-        tagPositions_lat(i) = tagPosition_m(1);
+        [tagPositions_lat(i), tagPositions_lon(i)] = vincentyendpoint(tempOriginLat, tempOriginLon, tagBearing_deg, tagRange_m);
 
-        tagPositions_lon(i) = tagPosition_m(2);
     else
         tagPositions_lat(i) = NaN;
+
         tagPositions_lon(i) = NaN;
     end
 end
