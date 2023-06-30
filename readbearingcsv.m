@@ -82,6 +82,7 @@ if fid ~= -1
         %i = i+1;
     end
 else
+    fprintf('UAV-RT: Error opening the bearing csv file.')
     tagID = uint32(NaN);
     parentFileName = {'File not found'};
     bearing = NaN;
