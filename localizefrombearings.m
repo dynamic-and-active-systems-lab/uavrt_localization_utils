@@ -104,11 +104,12 @@ yi = Y;
 si = sin(theta_i);
 ci = cos(theta_i);
 zi = si.*xi-ci.*yi;
+pos = zeros(2,1);
 pos(:,1) = [sum(si.*si) -sum(ci.*si);-sum(si.*ci) sum(ci.*ci)]\[sum(si.*zi);-sum(ci.*zi)];
 
 if  strcmp(method,'MLE')
     i = 1;res = 1;
-    while res(i)>0.001 && i<max_iter
+    while res > 0.001 && i < max_iter
         x = pos(1,i);
         y = pos(2,i);
         di = sqrt((x-xi).^2+(y-yi).^2);
@@ -117,7 +118,7 @@ if  strcmp(method,'MLE')
         
         pos(:,i+1) = [sum(si.*si_str) -sum(ci.*si_str);-sum(si.*ci_str) sum(ci.*ci_str)]\[sum(si_str.*zi);-sum(ci_str.*zi)];
         i = i+1;
-        res(i) = norm(pos(:,i)-pos(:,i-1));
+        res = norm(pos(:,i)-pos(:,i-1));
     end
     if i==max_iter
         warning(['MLE method did not converge after ',num2str(max_iter),' iterations.'])
@@ -135,18 +136,29 @@ if  strcmp(method,'MLE')
 
 elseif strcmp(method,'RMR')
     
-    %
+    %Define twice so coder knows it is variable size
+    int_log = NaN(2,1);
+    int_log = NaN(2,100);
+    MED_INT_LOG = NaN(2,1);
+    MED_INT_LOG = NaN(2,100);
     for i = 1:num_bears
         tick = 1;
         for j = [1:i-1,i+1:num_bears]
             ind_sel = find( (bc(:,1) == i  & bc(:,2) == j) | (bc(:,2) == i  & bc(:,1) == j)); %Find the entry that had both i and j in either the first or second columns
             int_log(:,tick) = [X_int(ind_sel);Y_int(ind_sel)]; %create a log of all i-th ray intersecting with all other rays
-            tick = tick+1;
+            tick = tick + 1;
+            if tick > size(int_log, 2)
+                int_log = [int_log, NaN(2,100)];%Expand preallocation if needed
+            end
         end
-        MED_INT_LOG(:,i) = median(int_log,2);%take the mean of the i-th ray's intersection locations.
+        MED_INT_LOG(:,i) = median(int_log,2,"omitnan");%take the mean of the i-th ray's intersection locations.
+        MED_INT_LOG(:,i) = median(int_log,2,"omitnan");%take the mean of the i-th ray's intersection locations.
+        if i+1 > size(MED_INT_LOG, 2)
+            MED_INT_LOG = [MED_INT_LOG, NaN(2,100)];%Expand preallocation if needed
+        end
     end
     
-    pos_RMR  = median(MED_INT_LOG,2);
+    pos_RMR  = median(MED_INT_LOG, 2, "omitnan");
     %disp(['loc_error_RMR = ',num2str(norm(pos_RMR))])
     position = pos_RMR;
     
@@ -164,10 +176,13 @@ elseif strcmp(method,'MEST')
     ci_hat_str = ci;
     
     wi = ones(size(X));
+    pos3 = zeros(2, max_iter);
     pos3(:,1) = ([sum(wi.*si.*si_hat_str) -sum(wi.*ci.*si_hat_str);-sum(wi.*si.*ci_hat_str) sum(wi.*ci.*ci_hat_str)])\[sum(wi.*si_hat_str.*zi);-sum(wi.*ci_hat_str.*zi)];
     
-    i = 1;clear res;res(1) = 1;
-    while res(i)>0.001 && i<max_iter
+    i = 1;
+    clear res; 
+    res = 1;
+    while res > 0.001 && i <= max_iter
         x = pos3(1,i);
         y = pos3(2,i);
         
@@ -193,14 +208,14 @@ elseif strcmp(method,'MEST')
         pos3(:,i+1) = ([sum(wi.*si.*si_hat_str) -sum(wi.*ci.*si_hat_str);-sum(wi.*si.*ci_hat_str) sum(wi.*ci.*ci_hat_str)])\[sum(wi.*si_hat_str.*zi);-sum(wi.*ci_hat_str.*zi)];
         %([sum(si.*si_str) -sum(ci.*si_str);-sum(si.*ci_str) sum(ci.*ci_str)])\[sum(si_str.*zi);-sum(ci_str.*zi)];
         i = i+1;
-        res(i) = norm(pos3(:,i)-pos3(:,i-1));
+        res = norm(pos3(:,i)-pos3(:,i-1));
         
     end
-	if i==max_iter
+    if i > max_iter
         warning(['MLE method did not converge after ',num2str(max_iter),' iterations.'])
         pos_MEST = [NaN;NaN];
     else
-        pos_MEST = pos3(:,end);
+        pos_MEST = pos3(:, i-1);
     end
     %disp(['loc_error_MEST = ',num2str(norm(pos_MEST))])
     position = pos_MEST;
