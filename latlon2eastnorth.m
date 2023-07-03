@@ -27,6 +27,12 @@ function [xEast_m , yNorth_m, range_m, bearing_deg] = latlon2eastnorth(lat1, lon
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
+nSecondary = numel(lat2);
+xEast_m  = zeros(nSecondary, 1);
+yNorth_m = zeros(nSecondary, 1);
+range_m  = zeros(nSecondary, 1);
+bearing_deg= zeros(nSecondary, 1);
+
 if numel(lat1)~=1 | numel(lon1)~=1 
     fprintf('UAV-RT: Only one lat and lon allowed for pimary position.')
     return
@@ -36,14 +42,11 @@ if numel(lat2) ~= numel(lon2)
     return
 end
 
-nSecondary = numel(lat2);
 lat2 = reshape(lat2, nSecondary,1);
 lon2 = reshape(lon2, nSecondary,1);
 
-xEast_m  = zeros(nSecondary, 1);
-yNorth_m = zeros(nSecondary, 1);
-range_m  = zeros(nSecondary, 1);
-bearing_deg= zeros(nSecondary, 1);
+
+
 for i = 1:nSecondary
     currLat2 = lat2(i);
     currLon2 = lon2(i);

@@ -89,6 +89,9 @@ for j = 1:nPoints
     residual = 1;
     
     % figure
+    twoSigmaM  = NaN;
+    deltaSigma = NaN; 
+    sigma = NaN;
     while residual > 10^-12
     
         sigma = sigmaNew;

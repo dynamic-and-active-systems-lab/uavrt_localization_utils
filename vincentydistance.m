@@ -53,6 +53,11 @@ L = L2 - L1;
 lamNew = L;
 i = 1;
 residual = 1;
+cosAlphaSquared = NaN;
+sinSigma        = NaN;
+cos2Sigma_m     = NaN;
+cosSigma        = NaN;
+sigma           = NaN;
 % figure
 while residual > 10^-12
     lam = lamNew;
