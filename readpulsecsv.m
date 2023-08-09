@@ -168,7 +168,11 @@ infInds    = find(strength == Inf);
 negInfInds = find(strength == -Inf);
 
 %Command has the ASL alt when command was issued.
-alt_ASL_m_at_start = commandArray(1,4);
+if ~isempty(commandArray)
+    alt_ASL_m_at_start = commandArray(1,4);
+else
+    alt_ASL_m_at_start = NaN;
+end
 
 badInds = unique([negInds; infInds; negInfInds]);
 
@@ -211,13 +215,24 @@ eulers_deg = EulerAngleStruct(roll_deg, pitch_deg, yaw_deg);
 
 pulses = PulseStruct(positions, eulers_deg, time, strength, freq_MHz, tag_id);
 
-commandIDs    = commandArray(:,1);
-commandLats   = commandArray(:,2);
-commandLons   = commandArray(:,3);
-commandAltASL = commandArray(:,4);
-commandAltAGL = commandAltASL - elevation_of_GCS_m;
-commandPos    = PositionStruct(commandLats, commandLons,...
-    commandAltASL, commandAltAGL);
+if ~isempty(commandArray)
+    commandIDs    = commandArray(:,1);
+    commandLats   = commandArray(:,2);
+    commandLons   = commandArray(:,3);
+    commandAltASL = commandArray(:,4);
+    commandAltAGL = commandAltASL - elevation_of_GCS_m;
+    commandPos    = PositionStruct(commandLats, commandLons,...
+        commandAltASL, commandAltAGL);
+else
+    commandIDs    = NaN;
+    commandLats   = NaN;
+    commandLons   = NaN;
+    commandAltASL = NaN;
+    commandAltAGL = NaN;
+    commandPos    = PositionStruct(commandLats, commandLons,...
+        commandAltASL, commandAltAGL);
+end
+
 
 commands = CommandStruct(commandIDs, commandPos);
 
