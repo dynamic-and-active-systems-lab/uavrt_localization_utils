@@ -33,7 +33,7 @@ tagID = uint32(mode(tagIDs, 'all')); %In case some other tags' pulses got into t
 otherTagPulseInds = (tagIDs ~= tagID);
 pulseStructVec = pulseStructVec(~otherTagPulseInds);
 
-[bearing, tau] = doapca(pulseStructVec,'power','linear');
+[bearing, tau] = doapca(pulseStructVec,'linear');
 
 % if any(tagIDs ~= tagIDs(1))
 %     fprintf('UAV-RT: All tags in pulse list file path must have the same tag ID integer')
