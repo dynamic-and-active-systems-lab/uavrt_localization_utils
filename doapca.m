@@ -1,32 +1,16 @@
-function [DOA, tau] = doapca(pulseList,strengthtype,scale)
+function [DOA, tau] = doapca(pulseList,scale)
 %DOAPCA developes a bearing estimate for a series of received radio pulses
 %based on the principle component analysis method.
 %   This function conducts a principle component analysis type bearing
 %   estimate on signal pulses in the pulseList vector. Each pulse signal
-%   corresponds to a given heading (pulse_yaw). The function assumes the
-%   output of the PCA method to be the mean of a vonMises distribution 
-%   and then finds the associated kappa value for that distribution that
-%   best fits the data. 
-%
+%   corresponds to a given heading (pulse_yaw). The program uses the SNR in
+%   dB for the pulses in the list and does the PCA on those pulses using a
+%   the original log scaling or a linear scaling depending on the 'scale'
+%   input
 %
 %
 %INPUTS
 %   pulseList           a (px1) vector of ReceivedPulse objects
-%   strengthtype        a char array of 'power' or 'amplitude' indicating
-%                       the strength used in the PCA method should use the
-%                       signal amplitude or power. If power is used, the
-%                       square of the inputs pulse signal is used. If
-%                       amplitude if fed as pulse_sig and power is
-%                       selected, the inputs to the PCA is power. If power
-%                       is fed as pulse_sig and amplitude is selected as
-%                       strength type, the input to the PCA is power. See
-%                       table below
-%                            pulse_sig           strengthtype        PCA input
-%                       ------------------------------------------------------
-%                            pulse amplitudes    amplitude           signal amplitude
-%                            pulse amplitudes    power               signal power
-%                            pulse power         amplitude           signal power
-%                            pulse power         power               power of signal power (power^2) -  this shouldn't likely be used.
 %
 %   scale               a char array of 'log' or 'linear' to indicate if
 %                       the scaling used in the PCA method should be log or
@@ -38,8 +22,6 @@ function [DOA, tau] = doapca(pulseList,strengthtype,scale)
 %                       the same as the yaw origin (typically N). 
 %   tau                 a (1x1) double containing the tau value for
 %                       each bearing estimate.
-%   kappa               a (1x1) double containing the kappa value fitted 
-%                       vonMises distribution
 %
 %--------------------------------------------------------------------------
 % Author: Michael Shafer
@@ -49,7 +31,8 @@ function [DOA, tau] = doapca(pulseList,strengthtype,scale)
 
 numPulses = numel(pulseList(:));
 
-curr_pulses = reshape([pulseList(:).strength],numPulses,1);
+curr_pulses_snrdB  = reshape([pulseList(:).snrdB],numPulses,1);
+curr_pulses_snrLin = 10.^(curr_pulses_snrdB/10);
 curr_eulers = reshape([pulseList(:).euler],numPulses,1);
 curr_yaws   = reshape([curr_eulers(:).yaw_deg],numPulses,1);
 
@@ -58,19 +41,13 @@ DOA_calc = NaN;
 DOA = 180/pi*DOA_calc;
 tau = NaN;
 
-if any(curr_pulses < 0) | any(abs(curr_pulses) == Inf)
+if any(curr_pulses_snrLin < 0) | any(abs(curr_pulses_snrLin) == Inf)
     fprintf('UAV-RT: Strength of all input pulses must be finite and positive.')
     return
 end
 
-if strcmp(strengthtype,'power')
-    P_all_ang_unscaled = (curr_pulses.^2./min(curr_pulses).^2);
-elseif strcmp(strengthtype,'amplitude')
-    P_all_ang_unscaled = (curr_pulses./min(curr_pulses));
-else
-    fprintf('UAV-RT: strengthtype must be power or amplitude.')
-    return
-end
+P_all_ang_unscaled = (curr_pulses_snrLin./min(curr_pulses_snrLin));
+
 
 if strcmp(scale,'linear')
     P_all_ang = P_all_ang_unscaled;
@@ -82,8 +59,6 @@ else
 end
 
 
-
-
 angs = curr_yaws*pi/180;
 
 sortedAngsDeg = sort(wrapTo360(curr_yaws));
@@ -93,8 +68,8 @@ totalSweptAngle = sum(diffAngsDeg);
 
 
 
-if length(curr_pulses)<4 | totalSweptAngle < 270
-    numPulses = length(curr_pulses);
+if length(curr_pulses_snrdB)<4 | totalSweptAngle < 270
+    numPulses = length(curr_pulses_snrdB);
     fprintf('Only %f pulse(s) detected over swept angle %f degrees. Insufficient to perform PCA Method which requires at least 270 degrees of sweep and 4 pulses received. Returning DOA based on maximum signal strength.', numPulses, totalSweptAngle)
     %wp(2) = NaN; wp(1) = NaN;tau = NaN; line_scale = 0;
 

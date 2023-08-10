@@ -35,6 +35,7 @@ stft_score_fspec                 = '%f';
 group_seq_counter_fspec          = '%f';
 group_in_fspec                   = '%f';
 group_snr_fspec                  = '%f';
+noise_psd_fspec                  = '%f';
 detection_status_fspec           = '%d';
 confirmed_status_fspec           = '%d';
 position_x_fspec                 = '%f';
@@ -47,7 +48,7 @@ orientation_w_fspec              = '%f';
 
 d = ',';%d for delimiter
 
-nPulseColumns = 19;
+nPulseColumns = 20;
 nCommandColumns = 4;
 
 sizeArray = [nPulseColumns, Inf];
@@ -62,6 +63,7 @@ pulseFormatSpec = [command_id_fspec, d, ...
     group_seq_counter_fspec, d, ...
     group_in_fspec, d, ...
     group_snr_fspec, d, ...
+    noise_psd_fspec, d, ...
     detection_status_fspec, d, ...
     confirmed_status_fspec, d, ...
     position_x_fspec, d, ...
@@ -112,7 +114,11 @@ while ~feof(fid)
 
     if ~seekStatus
         if commandID == 7
+            try
             pulseArray(dataInd,:) = fscanf(fid, pulseFormatSpec,[1, nPulseColumns]);
+            catch
+                pause(1)
+            end
             pulseLineNums(dataInd) = currLineNum;
             dataInd = dataInd + 1;
         elseif commandID == 10 | commandID == 11
@@ -152,20 +158,21 @@ stft_score_col = 7;
 group_seq_counter_col = 8;
 group_in_col = 9;
 group_snr_col = 10;
-detection_status_col = 11;
-confirmed_status_col = 12;
-position_x_col = 13;
-position_y_col = 14;
-position_z_col = 15;
-orientation_x_col = 16;
-orientation_y_col = 17;
-orientation_z_col = 18;
-orientation_w_col = 19;
+noise_psd_col = 11;
+detection_status_col = 12;
+confirmed_status_col = 13;
+position_x_col = 14;
+position_y_col = 15;
+position_z_col = 16;
+orientation_x_col = 17;
+orientation_y_col = 18;
+orientation_z_col = 19;
+orientation_w_col = 20;
 
-strength = pulseArray(:, snr_col);
-negInds   = find( strength <= 0);
-infInds    = find(strength == Inf);
-negInfInds = find(strength == -Inf);
+snrdB = pulseArray(:, snr_col);
+negInds   = find( snrdB <= 0);
+infInds    = find(snrdB == Inf);
+negInfInds = find(snrdB == -Inf);
 
 %Command has the ASL alt when command was issued.
 if ~isempty(commandArray)
@@ -178,13 +185,29 @@ badInds = unique([negInds; infInds; negInfInds]);
 
 pulseArray(badInds, :) = [];
 
-strength = pulseArray(:, snr_col);
+snrdB = pulseArray(:, snr_col);
 
-tag_id = pulseArray(:, tag_id_col);
+tagID = pulseArray(:, tag_id_col);
 
 time     = pulseArray(:, start_time_seconds_col);
 
+time_next = pulseArray(:, predict_next_start_seconds_col);
+
 freq_MHz = pulseArray(:, freq_Hz_col)/1e6;
+
+stftMag2 = pulseArray(:, stft_score_col);
+
+groupSeqCount = pulseArray(:, group_seq_counter_col);
+
+groupIndex = pulseArray(:, group_in_col);
+
+groupsnrdB = pulseArray(:, group_snr_col);
+
+noisePSD = pulseArray(:, noise_psd_col);
+
+detectStatus = pulseArray(:, detection_status_col);
+
+confirmStatus = pulseArray(:, confirmed_status_col);
 
 lat = pulseArray(:, position_x_col);
 
@@ -212,8 +235,8 @@ pos_ASL_m = pos_AGL_m + elevation_of_GCS_m;
 positions = PositionStruct(lat, lon, pos_ASL_m, pos_AGL_m);
 
 eulers_deg = EulerAngleStruct(roll_deg, pitch_deg, yaw_deg);
-
-pulses = PulseStruct(positions, eulers_deg, time, strength, freq_MHz, tag_id);
+ 
+pulses = PulseStruct(tagID, freq_MHz, positions, eulers_deg, time, time_next, snrdB, stftMag2, groupSeqCount, groupIndex , groupsnrdB, noisePSD,detectStatus , confirmStatus);
 
 if ~isempty(commandArray)
     commandIDs    = commandArray(:,1);
