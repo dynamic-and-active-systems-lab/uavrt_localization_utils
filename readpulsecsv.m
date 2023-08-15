@@ -31,7 +31,7 @@ if fid == -1
 else
     %Close clean out any bad data, then reopen
     fclose(fid);
-    cleancsv(filePath);
+    cleancsv(filepath);
     fid = fopen(filepath);
 
     command_id_fspec                 = '%d';
