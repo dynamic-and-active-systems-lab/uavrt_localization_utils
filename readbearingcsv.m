@@ -49,7 +49,7 @@ if fid ~= -1
     time_start_s   = zeros(nLines,1);
     time_end_s     = zeros(nLines,1);
     
-    i = 1;
+
     %while ~feof(fid)
     for i = 1:nLines
         fseek(fid, lineLocs(i), 'bof');

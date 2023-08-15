@@ -108,8 +108,8 @@ if nargin > 0
             pulse(i,j).groupIndex    = groupIndex(i,j);
             pulse(i,j).groupsnrdB    = groupsnrdB(i,j);
             pulse(i,j).noisePSD    = noisePSD(i,j);
-            pulse(i,j).detectStatus = detectStatus(i,j);
-            pulse(i,j).confirmStatus = confirmStatus(i,j);
+            pulse(i,j).detectStatus  = logical(detectStatus(i,j));
+            pulse(i,j).confirmStatus = logical(confirmStatus(i,j));
             pulse(i,j).position = pos(i,j);
             pulse(i,j).euler    = euler(i,j);
            
