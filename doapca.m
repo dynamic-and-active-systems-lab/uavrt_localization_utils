@@ -33,8 +33,17 @@ numPulses = numel(pulseList(:));
 
 curr_pulses_snrdB  = reshape([pulseList(:).snrdB],numPulses,1);
 curr_pulses_snrLin = 10.^(curr_pulses_snrdB/10);
+
+curr_pulses_noisePSD = reshape([pulseList(:).noisePSD],numPulses,1);
+
 curr_eulers = reshape([pulseList(:).euler],numPulses,1);
 curr_yaws   = reshape([curr_eulers(:).yaw_deg],numPulses,1);
+
+%Clear out placeholds for bad data points;
+curr_pulses_noisePSD(curr_pulses_noisePSD == -9999) = Nan;
+curr_pulses_snrdB(curr_pulses_snrdB == -9999) = Nan;
+
+curr_pulses_sigPSD = curr_pulses_noisePSD .* 10.^(curr_pulses_snrdB./10);
 
 %Define for Coder so DOA is defined for all execution paths
 DOA_calc = NaN;
@@ -46,7 +55,8 @@ if any(curr_pulses_snrLin < 0) | any(abs(curr_pulses_snrLin) == Inf)
     return
 end
 
-P_all_ang_unscaled = (curr_pulses_snrLin./min(curr_pulses_snrLin));
+%P_all_ang_unscaled = (curr_pulses_snrLin./min(curr_pulses_snrLin));
+P_all_ang_unscaled = (curr_pulses_sigPSD./min(curr_pulses_sigPSD));
 
 
 if strcmp(scale,'linear')
@@ -68,8 +78,8 @@ totalSweptAngle = sum(diffAngsDeg);
 
 
 
-if length(curr_pulses_snrdB)<4 | totalSweptAngle < 270
-    numPulses = length(curr_pulses_snrdB);
+if length(curr_pulses_sigPSD)<4 | totalSweptAngle < 270
+    numPulses = length(curr_pulses_sigPSD);
     fprintf('Only %f pulse(s) detected over swept angle %f degrees. Insufficient to perform PCA Method which requires at least 270 degrees of sweep and 4 pulses received. Returning DOA based on maximum signal strength.', numPulses, totalSweptAngle)
     %wp(2) = NaN; wp(1) = NaN;tau = NaN; line_scale = 0;
 
