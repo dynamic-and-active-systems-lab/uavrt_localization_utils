@@ -40,8 +40,8 @@ curr_eulers = reshape([pulseList(:).euler],numPulses,1);
 curr_yaws   = reshape([curr_eulers(:).yaw_deg],numPulses,1);
 
 %Clear out placeholds for bad data points;
-curr_pulses_noisePSD(curr_pulses_noisePSD == -9999) = Nan;
-curr_pulses_snrdB(curr_pulses_snrdB == -9999) = Nan;
+curr_pulses_noisePSD(curr_pulses_noisePSD == -9999) = NaN;
+curr_pulses_snrdB(curr_pulses_snrdB == -9999) = NaN;
 
 curr_pulses_sigPSD = curr_pulses_noisePSD .* 10.^(curr_pulses_snrdB./10);
 
