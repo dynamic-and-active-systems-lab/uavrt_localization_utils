@@ -50,10 +50,10 @@ else
     position_x_fspec                 = '%f';
     position_y_fspec                 = '%f';
     position_z_fspec                 = '%f';
-    orientation_x_fspec              = '%f';
-    orientation_y_fspec              = '%f';
-    orientation_z_fspec              = '%f';
-    orientation_w_fspec              = '%f';
+    roll_fspec                       = '%f';
+    pitch_fspec                      = '%f';
+    yaw_fspec                        = '%f';
+    empty_fspec                      = '%f';
 
     d = ',';%d for delimiter
 
@@ -78,10 +78,10 @@ else
         position_x_fspec, d, ...
         position_y_fspec, d, ...
         position_z_fspec, d, ...
-        orientation_x_fspec, d, ...
-        orientation_y_fspec, d, ...
-        orientation_z_fspec, d, ...
-        orientation_w_fspec, '\n'];
+        roll_fspec, d, ...
+        pitch_fspec, d, ...
+        yaw_fspec, d, ...
+        empty_fspec, '\n'];
 
     commandFormatSpec = [command_id_fspec, d, ...
         position_x_fspec, d, ...
@@ -171,10 +171,10 @@ else
     position_x_col = 14;
     position_y_col = 15;
     position_z_col = 16;
-    orientation_x_col = 17;
-    orientation_y_col = 18;
-    orientation_z_col = 19;
-    orientation_w_col = 20;
+    roll_col = 17;
+    pitch_col = 18;
+    yaw_col = 19;
+    empty_col = 20;
 
     snrdB = pulseArray(:, snr_col);
     negInds   = find( snrdB <= 0);
@@ -224,14 +224,19 @@ else
     %lonMean = mean(lon);
     %origin = [latMean, lonMean];
 
-    quat = pulseArray(:,[orientation_w_col, orientation_x_col, orientation_y_col, orientation_z_col]);
+    %quat = pulseArray(:,[orientation_w_col, orientation_x_col, orientation_y_col, orientation_z_col]);
 
-    eul_deg = 180/pi * quat2eul(quat);
+    %eul_deg = 180/pi * quat2eul(quat);
 
     %Following the 3-2-1 rotation (z-y'-x'') rotation sequence
-    yaw_deg = eul_deg(:,1);
-    pitch_deg = eul_deg(:,2);
-    roll_deg = eul_deg(:,3);
+    % yaw_deg = eul_deg(:,1);
+    % pitch_deg = eul_deg(:,2);
+    % roll_deg = eul_deg(:,3);
+    yaw_deg =  pulseArray(:, yaw_col);
+
+    pitch_deg = pulseArray(:, pitch_col);
+
+    roll_deg = pulseArray(:, roll_col);
 
     pos_AGL_m = pulseArray(:, position_z_col);
 
