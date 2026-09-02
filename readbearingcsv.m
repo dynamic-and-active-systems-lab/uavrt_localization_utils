@@ -55,30 +55,32 @@ if fid ~= -1
         fseek(fid, lineLocs(i), 'bof');
 
         lineStr = fgetl(fid);
-        commaInds = strfind(lineStr,',');
-        
-        tagID_inds          = 1 : commaInds(1)-1;
-        parentFileName_inds = commaInds(1)+1 : commaInds(2)-1;
-        bearing_inds        = commaInds(2)+1 : commaInds(3)-1;
-        tau_inds            = commaInds(3)+1 : commaInds(4)-1;
-        lat_inds            = commaInds(4)+1 : commaInds(5)-1;
-        lon_inds            = commaInds(5)+1 : commaInds(6)-1;
-        alt_AGL_inds        = commaInds(6)+1 : commaInds(7)-1;
-        alt_ASL_inds        = commaInds(7)+1 : commaInds(8)-1;
-        time_start_inds     = commaInds(8)+1 : commaInds(9)-1;
-        time_end_inds       = commaInds(9)+1 : length(lineStr);
+        if ~strcmp(lineStr(1),'#')
+            commaInds = strfind(lineStr,',');
 
-        tagID(i)          = uint32(real(str2double(lineStr(tagID_inds))));
-        parentFileName{i} = lineStr(parentFileName_inds);
-        bearing(i)        = real(str2double(lineStr(bearing_inds)));
-        tau(i)            = real(str2double(lineStr(tau_inds)));
-        latitude_deg(i)   = real(str2double(lineStr(lat_inds)));
-        longitude_deg(i)  = real(str2double(lineStr(lon_inds)));
-        alt_AGL_m(i)      = real(str2double(lineStr(alt_AGL_inds)));
-        alt_ASL_m(i)      = real(str2double(lineStr(alt_ASL_inds)));
-        time_start_s(i)   = real(str2double(lineStr(time_start_inds)));
-        time_end_s(i)     = real(str2double(lineStr(time_end_inds)));
+            tagID_inds          = 1 : commaInds(1)-1;
+            parentFileName_inds = commaInds(1)+1 : commaInds(2)-1;
+            bearing_inds        = commaInds(2)+1 : commaInds(3)-1;
+            tau_inds            = commaInds(3)+1 : commaInds(4)-1;
+            lat_inds            = commaInds(4)+1 : commaInds(5)-1;
+            lon_inds            = commaInds(5)+1 : commaInds(6)-1;
+            alt_AGL_inds        = commaInds(6)+1 : commaInds(7)-1;
+            alt_ASL_inds        = commaInds(7)+1 : commaInds(8)-1;
+            time_start_inds     = commaInds(8)+1 : commaInds(9)-1;
+            time_end_inds       = commaInds(9)+1 : length(lineStr);
 
+            tagID(i)          = uint32(real(str2double(lineStr(tagID_inds))));
+            parentFileName{i} = lineStr(parentFileName_inds);
+            bearing(i)        = real(str2double(lineStr(bearing_inds)));
+            tau(i)            = real(str2double(lineStr(tau_inds)));
+            latitude_deg(i)   = real(str2double(lineStr(lat_inds)));
+            longitude_deg(i)  = real(str2double(lineStr(lon_inds)));
+            alt_AGL_m(i)      = real(str2double(lineStr(alt_AGL_inds)));
+            alt_ASL_m(i)      = real(str2double(lineStr(alt_ASL_inds)));
+            time_start_s(i)   = real(str2double(lineStr(time_start_inds)));
+            time_end_s(i)     = real(str2double(lineStr(time_end_inds)));
+
+        end
         %i = i+1;
     end
 else

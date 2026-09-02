@@ -1,4 +1,5 @@
-function pulse = PulseStruct(tagID, freqMHz, pos, euler, time, timeNext, snrdB, stftMag2, groupSeqCount, groupIndex, groupsnrdB, noisePSD,detectStatus , confirmStatus)
+function pulse = PulseStruct(tagID, freqMHz, lat, lon, altAGL, roll, pitch, yaw, time, timeNext, snrdB, stftMag2, groupSeqCount, groupIndex, groupsnrdB, noisePSD,detectStatus , confirmStatus, antennaOffset)
+
 %PULSESTRUCT Generates a Pulse structure
 %   This function generates a standard pulse structure with the
 %   following fields:
@@ -32,8 +33,14 @@ function pulse = PulseStruct(tagID, freqMHz, pos, euler, time, timeNext, snrdB, 
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-localPosition = PositionStruct();
-localEuler    = EulerAngleStruct();
+% localPosition = PositionStruct();
+% localEuler    = EulerAngleStruct();
+localLat    = 0;
+localLon    = 0;
+localAltAGL = 0;
+localRoll    = 0;
+localPitch    = 0;
+localYaw = 0;
 localTime     = 0;
 localSNR = 0;
 localStftMag2 = 0;
@@ -43,12 +50,13 @@ localGroupSNRdB = 0;
 localNoisePSD = 0;
 localDetectionStatus = false;
 localConfirmationStatus = false;
+localAntennaOffset = 0;
 
 localFreqMHz  = 0;
 localTagID  = 0;
 
-if nargin ~= 0 & nargin ~= 14
-    fprintf('UAV-RT: Input to ReceivedPulse class must either be empty of contain 14 inputs. ')
+if nargin ~= 0 & nargin ~= 19
+    fprintf('UAV-RT: Input to ReceivedPulse class must either be empty of contain 15 inputs. ')
     return
 end
 
@@ -64,8 +72,16 @@ pulseInit.groupsnrdB   = localGroupSNRdB;
 pulseInit.noisePSD = localNoisePSD;
 pulseInit.detectStatus = localDetectionStatus;
 pulseInit.confirmStatus = localConfirmationStatus;
-pulseInit.position = localPosition;
-pulseInit.euler    = localEuler;
+% pulseInit.position = localPosition;
+% pulseInit.euler    = localEuler;
+pulseInit.lat  = localLat;
+pulseInit.lon = localLon;
+pulseInit.AltAGL = localAltAGL;
+pulseInit.roll = localRoll;
+pulseInit.pitch = localPitch;
+pulseInit.yaw = localYaw;
+
+pulseInit.antennaOffset = localAntennaOffset;
 
 
 
@@ -73,26 +89,31 @@ coder.varsize('pulse');
 pulse = pulseInit;
 
 if nargin > 0
-    if ~all((size(pos) ==  size(freqMHz)) | ...
-            (size(pos) ==  size(tagID))| ...
-            (size(pos) ==  size(euler)) | ...
-            (size(pos) ==  size(time))  | ...
-            (size(pos) ==  size(timeNext))  | ...
-            (size(pos) ==  size(snrdB)) | ...
-            (size(pos) ==  size(stftMag2)) | ...
-            (size(pos) ==  size(groupSeqCount)) | ...
-            (size(pos) ==  size(groupIndex)) | ...
-            (size(pos) ==  size(groupsnrdB)) | ...
-            (size(pos) ==  size(noisePSD)) | ...
-            (size(pos) ==  size(detectStatus)) | ...
-            (size(pos) ==  size(detectStatus)) | ...
-            (size(pos) ==  size(confirmStatus)))
+    if ~all((size(lat) ==  size(freqMHz)) | ...
+            (size(lat) ==  size(tagID))| ... %(size(lat) ==  size(euler)) | ...
+            (size(lat) ==  size(time))  | ...
+            (size(lat) ==  size(timeNext))  | ...
+            (size(lat) ==  size(snrdB)) | ...
+            (size(lat) ==  size(stftMag2)) | ...
+            (size(lat) ==  size(groupSeqCount)) | ...
+            (size(lat) ==  size(groupIndex)) | ...
+            (size(lat) ==  size(groupsnrdB)) | ...
+            (size(lat) ==  size(noisePSD)) | ...
+            (size(lat) ==  size(detectStatus)) | ...
+            (size(lat) ==  size(detectStatus)) | ...
+            (size(lat) ==  size(confirmStatus)) | ...
+            (size(lat) ==  size(lon)) | ...
+            (size(lat) ==  size(altAGL)) | ...
+            (size(lat) ==  size(roll)) | ...
+            (size(lat) ==  size(pitch)) | ...
+            (size(lat) ==  size(yaw)) | ...
+            (size(lat) ==  size(antennaOffset)))
         fprintf('UAV-RT: All inputs must be the same size. ')
         return
     end
 
-    nRows = size(pos,1);
-    nCols = size(pos,2);
+    nRows = size(lat,1);
+    nCols = size(lat,2);
     %pulse(nRows,nCols) = pulse; %Coder doesn't like this
     pulse = repmat(pulse,nRows,nCols);
 
@@ -110,8 +131,15 @@ if nargin > 0
             pulse(i,j).noisePSD    = noisePSD(i,j);
             pulse(i,j).detectStatus  = logical(detectStatus(i,j));
             pulse(i,j).confirmStatus = logical(confirmStatus(i,j));
-            pulse(i,j).position = pos(i,j);
-            pulse(i,j).euler    = euler(i,j);
+            % pulse(i,j).position = pos(i,j);
+            % pulse(i,j).euler    = euler(i,j);
+            pulse(i,j).lat = lat(i,j);
+            pulse(i,j).lon = lon(i,j);
+            pulse(i,j).altAGL = altAGL(i,j);
+            pulse(i,j).roll = roll(i,j);
+            pulse(i,j).pitch = pitch(i,j);
+            pulse(i,j).yaw = yaw(i,j);
+            pulse(i,j).antennaOffset  = antennaOffset(i,j);
            
         end
     end

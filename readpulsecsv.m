@@ -53,11 +53,12 @@ else
     roll_fspec                       = '%f';
     pitch_fspec                      = '%f';
     yaw_fspec                        = '%f';
+    antenna_offset_fspec             = '%f';
     empty_fspec                      = '%f';
 
     d = ',';%d for delimiter
 
-    nPulseColumns = 20;
+    nPulseColumns = 21;
     nCommandColumns = 4;
 
     sizeArray = [nPulseColumns, Inf];
@@ -81,6 +82,7 @@ else
         roll_fspec, d, ...
         pitch_fspec, d, ...
         yaw_fspec, d, ...
+        antenna_offset_fspec, d, ...
         empty_fspec, '\n'];
 
     commandFormatSpec = [command_id_fspec, d, ...
@@ -108,6 +110,7 @@ else
 
     while ~feof(fid)
         lineStr = fgetl(fid);
+        if ~strcmp(lineStr(1),'#')
         commaLocations = strfind(lineStr,',');
         commandID = str2double( lineStr(1 : (commaLocations(1)-1) ));
 
@@ -140,10 +143,10 @@ else
             fclose(fid);
             return
         end
-
+        end
         currLineNum = currLineNum + 1;
         currentLineFilePosition = ftell(fid);
-
+        
 
     end
 
@@ -175,6 +178,8 @@ else
     pitch_col = 18;
     yaw_col = 19;
     empty_col = 20;
+    antenna_offset_col = 21;
+    
 
     snrdB = pulseArray(:, snr_col);
     negInds   = find( snrdB <= 0);
@@ -238,6 +243,8 @@ else
 
     roll_deg = pulseArray(:, roll_col);
 
+    ant_off = pulseArray(:, antenna_offset_col);
+
     pos_AGL_m = pulseArray(:, position_z_col);
 
     elevation_of_GCS_m = alt_ASL_m_at_start - pos_AGL_m(1);
@@ -248,7 +255,7 @@ else
 
     eulers_deg = EulerAngleStruct(roll_deg, pitch_deg, yaw_deg);
 
-    pulses = PulseStruct(tagID, freq_MHz, positions, eulers_deg, time, time_next, snrdB, stftMag2, groupSeqCount, groupIndex , groupsnrdB, noisePSD,detectStatus , confirmStatus);
+    pulses = PulseStruct(tagID, freq_MHz, positions, eulers_deg, time, time_next, snrdB, stftMag2, groupSeqCount, groupIndex , groupsnrdB, noisePSD,detectStatus , confirmStatus, ant_off);
 
     if ~isempty(commandArray)
         commandIDs    = commandArray(:,1);
